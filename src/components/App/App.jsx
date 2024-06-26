@@ -6,6 +6,13 @@ import UserMenu from "../UserMenu/UserMenu";
 import CustomButton from "../CustomButton/CustomButton";
 import ClickCounter from "../handleClick/handleClick";
 import { useState } from "react";
+import LoginForm from "../LoginForm/LoginForm";
+import SearchBar from "../SearchBar/SearchBar";
+import LangSwitcher from "../LangSwitcher/LangSwitcher";
+import CoffeeSize from "../CoffeeSize/CoffeeSize";
+import CheckBox from "../CheckBox/CheckBox";
+import LogiFormControle from "../LoginFormControle/LoginFormControle";
+import FeedbackForm from "../FeedbackForm/FeedbackForm";
 
 export default function App() {
   const [clicks, setClicks] = useState(0);
@@ -13,6 +20,12 @@ export default function App() {
   const handleClick = () => {
     setClicks(clicks + 1);
   };
+
+  const handleLogin = (userData) => {
+    console.log(userData);
+  };
+
+  const [lang, setLang] = useState("uk");
 
   return (
     <>
@@ -46,6 +59,15 @@ export default function App() {
       <button onClick={(evt) => console.log(evt)}>Second button</button>
       <CustomButton message="Playing music!">Play some music</CustomButton>
       <CustomButton message="Uploading your data!">Upload data</CustomButton>
+      <h1>Please login to your account!</h1>
+      <LoginForm onLogin={handleLogin} />
+      <SearchBar />
+      <p>Selected language: {lang}</p>
+      <LangSwitcher value={lang} onSelect={setLang} />
+      <CoffeeSize />
+      <CheckBox />
+      <LogiFormControle />
+      <FeedbackForm />
     </>
   );
 }

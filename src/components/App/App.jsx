@@ -1,35 +1,71 @@
-import Product from "../Product/Product";
-import BookList from "../BookList/BookList";
-import favouriteBooks from "../../favouriteBooks.json";
-import Alert from "../Alert/Alert";
-import UserMenu from "../UserMenu/UserMenu";
-import CustomButton from "../CustomButton/CustomButton";
-import ClickCounter from "../handleClick/handleClick";
-import { useState } from "react";
-import LoginForm from "../LoginForm/LoginForm";
-import SearchBar from "../SearchBar/SearchBar";
-import LangSwitcher from "../LangSwitcher/LangSwitcher";
-import CoffeeSize from "../CoffeeSize/CoffeeSize";
-import CheckBox from "../CheckBox/CheckBox";
-import LogiFormControle from "../LoginFormControle/LoginFormControle";
-import FeedbackForm from "../FeedbackForm/FeedbackForm";
+// import Product from "../Product/Product";
+// import BookList from "../BookList/BookList";
+// import favouriteBooks from "../../favouriteBooks.json";
+// import Alert from "../Alert/Alert";
+// import UserMenu from "../UserMenu/UserMenu";
+// import CustomButton from "../CustomButton/CustomButton";
+// import ClickCounter from "../handleClick/handleClick";
+import { useState, useEffect } from "react";
+// import LoginForm from "../LoginForm/LoginForm";
+// import SearchBar from "../SearchBar/SearchBar";
+// import LangSwitcher from "../LangSwitcher/LangSwitcher";
+// import CoffeeSize from "../CoffeeSize/CoffeeSize";
+// import CheckBox from "../CheckBox/CheckBox";
+// import LogiFormControle from "../LoginFormControle/LoginFormControle";
+// import FeedbackForm from "../FeedbackForm/FeedbackForm";
+import ArticleList from "../ArticleList/ArticleList";
+import { fetchArticlesWithTopic } from "../../articles-api.js";
+import SearchForm from "../SearchForm/SearchForm.jsx";
 
 export default function App() {
-  const [clicks, setClicks] = useState(0);
+  // const [clicks, setClicks] = useState(0);
 
-  const handleClick = () => {
-    setClicks(clicks + 1);
+  // const handleClick = () => {
+  //   setClicks(clicks + 1);
+  // };
+
+  // const handleLogin = (userData) => {
+  //   console.log(userData);
+  // };
+
+  // const [lang, setLang] = useState("uk");
+
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        setLoading(true);
+        const data = await fetchArticlesWithTopic("react");
+        setArticles(data);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchArticles();
+  }, []);
+
+  const handleSearch = async (topic) => {
+    try {
+      setArticles([]);
+      setError(false);
+      setLoading(true);
+      const data = await fetchArticlesWithTopic(topic);
+      setArticles(data);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const handleLogin = (userData) => {
-    console.log(userData);
-  };
-
-  const [lang, setLang] = useState("uk");
 
   return (
     <>
-      <UserMenu />
+      {/* <UserMenu />
       <h1>Best selling</h1>
 
       <Product name="Tacos With Lime" price={10.99} />
@@ -67,7 +103,13 @@ export default function App() {
       <CoffeeSize />
       <CheckBox />
       <LogiFormControle />
-      <FeedbackForm />
+      <FeedbackForm /> */}
+      <SearchForm onSearch={handleSearch} />
+      {loading && <p>Loading data, please wait...</p>}
+      {error && (
+        <p>Whoops, something went wrong! Please try reloading this page!</p>
+      )}
+      {articles.length > 0 && <ArticleList items={articles} />}
     </>
   );
 }
